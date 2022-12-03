@@ -6,6 +6,9 @@ fn share_char(a: &str, b: &str, c: &str) -> char {
     let set2: HashSet<char> = b.chars().collect();
     let set3: HashSet<char> = c.chars().collect();
     *( &(&set1 & &set2) & &set3).iter().next().unwrap()
+    //set1.intersection(&set2).collect::<HashSet<char>>().iter().next().unwrap()
+
+
 }
 
 fn main() {
