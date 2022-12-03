@@ -1,35 +1,24 @@
-use std::fs::File;
-use std::io::BufReader;
 use std::io::prelude::*;
-fn main()-> std::io::Result<()> {
-    let file = File::open("input_1.txt")
-    .expect("file not found!");
-    let  buf_reader = BufReader::new(file);
-    let mut counter=0;
+
+fn main() {
+    let content = std::fs::read_to_string("input_1.txt")
+        .expect("file not found!");
+    
+    let mut counter = 0;
     let mut array: [i32; 3] = [0; 3];
-    let mut pointer = 0;
-    for line in buf_reader.lines() {
-        let line = line.unwrap();
+    let mut index = 0;
+    
+    for line in content.lines() {
         if line.is_empty() {
-            if counter > array[pointer] {
-                if array[pointer] == 0 {
-                    array[pointer] = counter;
-                    pointer+=1;
-                    if pointer ==3{
-                       pointer = array.iter().position(|&x| x == *array.iter().min().unwrap()).unwrap();
-                    }
-                    
-                } else {
-                    array[pointer] = counter;
-                    pointer = array.iter().position(|&x| x == *array.iter().min().unwrap()).unwrap();
-                }
-                
+            if counter > array[index] {
+                array[index] = counter;
+                let min_element = *array.iter().min().unwrap();
+                index = array.iter().position(|&x| x == min_element).unwrap();
             }
             counter = 0;
         } else {
-            counter+=line.parse::<i32>().unwrap();
+            counter += line.parse::<i32>().unwrap();
         }
     }
-    println!( "{},{}",  *array.iter().min().unwrap(),array[0]+array[1]+array[2]);
-    Ok(())
+    println!("{},{},{}", array[0],array[1],array[2]);
 }
