@@ -13,7 +13,11 @@ fn main() {
     let mut points = 0;
     for line in content.lines() {
         let (split1, split2) = line.split_at(line.len()/2);
-        points += share_char(split1, split2) as u32 - 64;
+        let char_result= share_char(split1, split2) as u32;
+        match char_result {
+            97..=122 => points += char_result - (70 + 26),
+            _ => points += char_result - 64 + 26,
+        }
     }
     println!("{}", points);
 }
