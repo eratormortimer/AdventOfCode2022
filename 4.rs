@@ -1,35 +1,36 @@
+use std::ops::RangeInclusive;
 
-fn calc_containment(section1: &str, section2: &str) -> i32 {
-    let bounds1: Vec<i32> = section1.split("-").map(|x| x.parse::<i32>().unwrap()).collect();
-    let bounds2: Vec<i32> = section2.split("-").map(|x| x.parse::<i32>().unwrap()).collect();
-    if bounds1[0] <= bounds2[0] && bounds1[1] >= bounds2[1] || bounds2[0] <= bounds1[0] && bounds2[1] >= bounds1[1] {
-        return 1;
+trait RangeExt {
+    fn contains_range(&self, other: RangeInclusive<i32>) -> bool;
+    fn overlaps_range(&self, other: RangeInclusive<i32>) -> bool;
+}
+impl RangeExt for RangeInclusive<i32> {
+    fn contains_range(&self, other: RangeInclusive<i32>) -> bool {
+        self.contains(other.start()) && self.contains(other.end()) 
+        || other.contains(self.start()) && other.contains(self.end())
     }
-    0
     
-}
-fn calc_overlap(section1: &str, section2: &str) -> i32 {
-    let bounds1: Vec<i32> = section1.split("-").map(|x| x.parse::<i32>().unwrap()).collect();
-    let bounds2: Vec<i32> = section2.split("-").map(|x| x.parse::<i32>().unwrap()).collect();
-    if bounds1[0] <= bounds2[0] && bounds1[1] >= bounds2[1] || bounds2[0] <= bounds1[0] && bounds2[1] >= bounds1[1] 
-        || bounds1[0] <= bounds2[0] && bounds2[0] <= bounds1[1] || bounds1[0]<= bounds2[1] && bounds2[1] <= bounds1[1] 
-        || bounds2[0] <= bounds1[0] && bounds1[0] <= bounds2[1] || bounds2[0]<= bounds1[1] && bounds1[1] <= bounds2[1] 
-    {
-        return 1;
+    fn overlaps_range(&self, other: RangeInclusive<i32>) -> bool { 
+        self.contains(other.start()) || self.contains(other.end()) 
+        || other.contains(self.start()) || other.contains(self.end())
     }
-    0
 }
-
-
-
 
 fn main() {
     let content = std::fs::read_to_string("input_4.txt")
         .expect("file not found!");
     let mut points = 0;
     for line in content.lines() {
-        let line: Vec<&str> = line.split(",").collect();
-        points += calc_overlap(line[0], line[1]);
+        let mut ranges = line.split(',')
+            .map(|x| {
+                let mut split = x.split('-').map(|y| y.parse::<i32>().unwrap());
+                let a = split.next().unwrap();
+                let b = split.next().unwrap();
+                a..=b
+            });
+        let first = ranges.next().unwrap();
+        let second = ranges.next().unwrap();
+        points += first.contains_range(second) as i32;
     }
     println!("{}", points);
 }
