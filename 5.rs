@@ -54,17 +54,18 @@ fn remove_whitespace(s: &str) -> String {
 
 fn execute_crane(crates: &mut Vec<String>, commands: &Vec<Vec<i32>>) {
     for line in commands {
-        for i in 0..line[0] {
-            let block1 = crates[(line[1]as usize)-1].clone();
-            let (c, t) = block1.split_at(1);
-            let c = &remove_whitespace(&c);
-            let t = &remove_whitespace(&t);
-            crates[(line[1] as usize)-1]=t.to_string();
-            println!("{}",crates[(line[1] as usize)-1]);
-            crates[(line[2] as usize)-1].insert(0,c.chars().nth(0).unwrap());
-            println!("{}",crates[(line[2] as usize)-1]);
+        
+        let block1 = crates[(line[1]as usize)-1].clone();
+        let (c, t) = block1.split_at((line[0]as usize));
+        let mut c = &mut remove_whitespace(&c);
+        let t = &remove_whitespace(&t);
+        crates[(line[1] as usize)-1]=t.to_string();
+        println!("{}",crates[(line[1] as usize)-1]);
+        c.push_str(&crates[(line[2] as usize)-1]);
+        crates[(line[2] as usize)-1]=c.to_string();
+        println!("{}",crates[(line[2] as usize)-1]);
             
-        }
+        
     }
     
 }
